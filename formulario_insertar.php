@@ -23,7 +23,8 @@ $mensaje = "";
 
 			  //$resultado_verificar_rows = $partidos->verificar_fechas($fecha_partido,$conexion);
 
-
+			  $partidos->verificar_fechas($fecha_partido, $conexion);
+			  $partidos->verificar_rango_hora($hora_partido,$conexion);
 			  $resultado_insertar = $partidos->insertar($jornada,$equipo_local,$equipo_visita,$goles_local,$goles_visita,$fecha_partido,$hora_partido,$conexion);
 			  $mensaje = $partidos->mensaje;			  	
 		  }catch (Exception $e){

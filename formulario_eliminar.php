@@ -38,12 +38,8 @@
    			$partidos = new Partidos;
 		  	$jornada = $_POST['Code'];
 		  	$equipo_local = $_POST['Code2'];
-		  	$equipo_visita = $_POST['Code3'];
-		  	$goles_local= $_POST['goles_local'];
-		  	$goles_visita= $_POST['goles_visita'];
-		  	$fecha_partido= $_POST['fecha_partido'];
-		  	$hora_partido = $_POST['hora_partido'];   
-		  	$resultado_insertar = $partidos->actualizar($jornada,$equipo_local,$equipo_visita,$goles_local,$goles_visita,$fecha_partido,$hora_partido,$conexion);		
+		  	$equipo_visita = $_POST['Code3'];   
+		  	$resultado_insertar = $partidos->eliminar($jornada,$equipo_local,$equipo_visita,$conexion);		
  			$mensaje = $partidos->mensaje;
   		}catch (Exception $e){
 			$mensaje = $e->GetMessage();
@@ -68,25 +64,24 @@ function asignar_variable_escondida()
    document.getElementById('Code').value = document.getElementById('jornada').value;
    document.getElementById('Code2').value = document.getElementById('equipo_local').value;
    document.getElementById('Code3').value = document.getElementById('equipo_visita').value;
-
+   verificar_marcador();
 }
-function llamar_pantalla(){
-   asignar_variable_escondida();
-   parent.location='formulario_modificar.php?jornada=' + document.getElementById('Code').value + "&equipo_local="+ document.getElementById('Code2').value+"&equipo_visita="+document.getElementById('Code3').value ;
-   
-} 
 
 function verificar_marcador(){
-	var marcador_local = document.getElementById('Code2').value;
-	var marcador_visita = document.getElementById('Code3').value;
-	console.log('marcador_local');
-	if (marcador_local == "0"){
-		alert("hola");
+	var marcador_local = document.getElementById('Code2');
+	var marcador_visita = document.getElementById('Code3');
+	if (marcador_local === 0  && marcador_visita === 0){
+		console.log("hola");
 	}
 }
 
+function llamar_pantalla(){
+   asignar_variable_escondida();
+   parent.location='formulario_eliminar.php?jornada=' + document.getElementById('Code').value + "&equipo_local="+ document.getElementById('Code2').value+"&equipo_visita="+document.getElementById('Code3').value ;
+   
+} 
 function limpiar_pantalla(){
-   parent.location='formulario_modificar.php';
+   parent.location='formulario_eliminar.php';
 }
 function inicializar(){
    var inhabilitar_llave = '<? echo $inhabilitar_llave;?>';
@@ -99,12 +94,13 @@ function inicializar(){
       document.getElementById("equipo_local").disabled = false; 
       document.getElementById("equipo_visita").disabled = false; 
       document.getElementsByClassName("llave").value = "";
-   }  
+   }   
 }
 </script>
 </head>
 <body onload="inicializar();">
-	<table align="center"><form action="" method="post" onclick="verificar_marcador()">
+	<table align="center">
+	<form action="" method="post" onkeypress="document.getElementById('Mensaje').innerHTML = ''">
 	<tr>
 		<td>
 			<span class="">Jornada:</span>
@@ -172,7 +168,7 @@ function inicializar(){
 	<tr>
 	  <td colspan="2" align="center">&nbsp;&nbsp;
 	    <input type="button" value="Buscar" name="Buscar" id="Buscar" onclick="llamar_pantalla();" />
-	    &nbsp;&nbsp;<input type="submit" value="Actualizar" name="Actualizar" id="Actualizar" onclick="asignar_variable_escondida();"/>
+	    &nbsp;&nbsp;<input type="submit" value="Borrar" name="Actualizar" id="Eliminar" onclick="asignar_variable_escondida();"/>
 	    &nbsp;&nbsp;<input type="button" value="Cancelar" name="Cancelar" id="Cancelar" onclick="limpiar_pantalla();" /> 
 		<input type="hidden" name="Code" id="Code" value="<?php echo $jornada;?>"/>
 		<input type="hidden" name="Code2" id="Code2" value="<?php echo $equipo_local;?>"/>

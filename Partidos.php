@@ -27,46 +27,50 @@ public $datos;
 	}
 
 
-/*function actualizar($codigo,$nombre,$descripcion,$conexion)
-{
-  try{
-    $resultado = mysql_query("update categorias set 
-	                          nombre = '" .$nombre."',
-							  descripcion = '" .$descripcion."'
-							  where codigo_categoria = '" .$codigo."'",$conexion);
-	if (!$resultado)
+	function actualizar($jornada,$codigo_equipo_local,$codigo_equipo_visita,$goles_local,$goles_visita,$fecha_partido,$hora_partido,$conexion){
+	  try{
+	    $resultado =mysql_query("update Partidos set
+								 Goles_local = '$goles_local',
+								 Goles_visita = '$goles_visita',
+								 Fecha_partido = '$fecha_partido',
+								 Hora_partido = '$hora_partido'
+								 where 	Jornada = ".$jornada." AND
+								 Codigo_equipo_local = '$codigo_equipo_local' AND
+								 Codigo_equipo_visita = '$codigo_equipo_visita'", $conexion);			
+		if (!$resultado)
+		{
+		 throw new Exception(mysql_error()); 
+		}
+		$this->mensaje = 'El registro se actualizó correctamente';
+		return $resultado;
+	  }catch(Exception $e){
+	     throw new Exception($e->getMessage());
+		 
+	  }
+	}
+	function eliminar($jornada,$codigo_equipo_local,$codigo_equipo_visita,$conexion)
 	{
-	 throw new Exception(mysql_error()); 
+	  try{
+	    $resultado = mysql_query("delete from Partidos where 	
+	    						 Jornada = ".$jornada." AND
+								 Codigo_equipo_local = '$codigo_equipo_local' AND
+								 Codigo_equipo_visita = '$codigo_equipo_visita'",$conexion);
+		if (!$resultado)
+		{
+		  throw new Exception('Error al eliminar el registro:' || mysql_error()); 
+		}
+		$this->mensaje = "El registro se eliminó correctamente";
+		return $resultado;
+	  }catch(Exception $e){
+	     throw new Exception($e->getMessage());
+	  }
 	}
-	$this->mensaje = 'El registro se actualizó correctamente';
-	return $resultado;
-  }catch(Exception $e){
-     throw new Exception($e->getMessage());
-	 
-  }
-}
-function eliminar($codigo,$conexion)
-{
-  try{
-    $resultado = mysql_query("delete from categorias where 
-	                          codigo_categoria = ".$codigo,$conexion);
-	if (!$resultado)
-	{
-	  throw new Exception('Error al eliminar el registro:' || mysql_error()); 
-	}
-	if (mysql_num_rows() == 0){
-	  throw new Exception('El registro que se intentó eliminar no existe.');  
-	}
-	$this->mensaje = "El registro se eliminó correctamente";
-	return $resultado;
-  }catch(Exception $e){
-     throw new Exception($e->getMessage());
-  }
-}*/
+
 	function buscar_registro ($jornada,$codigo_equipo_local,$codigo_equipo_visita, $conexion){
 	   try{
 	       $valor = 
-		   $resultado = mysql_query("select * from categorias where Codigo_equipo_local=".'$codigo_equipo_local'."and Codigo_equipo_visita=".'$codigo_equipo_visita'."and Jornada=".$jornada,$conexion);
+		   $resultado = mysql_query("SELECT * FROM Partidos WHERE Jornada=".$jornada." AND Codigo_equipo_local='$codigo_equipo_local' AND Codigo_equipo_visita= '$codigo_equipo_visita'",$conexion);
+
 		   if (!$resultado)
 	 	   {
 	         throw new Exception(mysql_error($resultado));	
@@ -81,8 +85,8 @@ function eliminar($codigo,$conexion)
 			   $this->jornada = $row['Jornada'];
 	   		   $this->codigo_equipo_visita = $row['Codigo_equipo_visita'];
 	  		   $this->codigo_equipo_local = $row['Codigo_equipo_local'];
-	  		   $this->goles_visita = $row['Goles_local'];
-	  		   $this->goles_local = $row['Goles_visita'];
+	  		   $this->goles_visita = $row['Goles_visita'];
+	  		   $this->goles_local = $row['Goles_local'];
 	  		   $this->fecha_partido = $row['Fecha_partido'];
 	  		   $this->hora_partido = $row['Hora_partido'];
 
@@ -97,19 +101,16 @@ function eliminar($codigo,$conexion)
 
 	function verificar_fechas($fecha_partido,$conexion){
 		try{
-		   $resultado = mysql_query("Select * from Partidos where Fecha_partido=".'$fecha_partido');	
-		   if (!$resultado)
-	 	   {
+		   $resultado = mysql_query("Select * from Partidos where Fecha_partido='$fecha_partido'");	
+		   if (!$resultado){
 	         throw new Exception(mysql_error($resultado));	
-		   }else
-		   {
-		     if (mysql_num_rows($resultado) == 4)
+		   }else{
+		     if (mysql_num_rows($resultado) == 5)
 			 {
-			   throw new Exception("El registro solicitado no existe");	
+			   throw new Exception("No se pueden ingresar mas partidos en esta '$fecha_partido' fecha");	
 			 } 
 
 			 while($row = mysql_fetch_array($resultado)){
-
 
 			 }
 
@@ -118,6 +119,28 @@ function eliminar($codigo,$conexion)
 	   }catch(Exception $e){
 	      throw new Exception($e->getMessage());
 	   }
+
+	}
+
+	function verificar_rango_hora($hora_partido,$conexion){
+		try{
+			$resultado = mysql_query("SELECT * FROM Partidos WHERE Fecha_partido='$hora_partido'",$conexion);
+			if (!$resultado){
+				throw new Exception(mysql_error($resultado));
+			}else{
+				if(mysql_num_rows($resultado)==0){
+					throw new Exception("Error Processing Request");
+				}
+				echo strtotime($hora_partido);
+				echo strtotime('9 am');
+				if (strtotime($hora_partido) > strtotime('9 am')){
+					echo "test";
+				}
+			}
+
+		}catch(Exception $e){
+
+		}
 
 	}
 
