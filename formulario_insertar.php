@@ -5,7 +5,7 @@ $mensaje = "";
   include_once("llenar_dropdown.php");
   if ((isset($_POST['jornada'],$_POST['equipo_local'],$_POST['equipo_visita'], $_POST['goles_local'], $_POST['goles_visita'],$_POST['fecha_partido'], $_POST['hora_partido'])))
   {
-	  if ((trim($_POST['jornada']) == "") || (trim($_POST['equipo_visita']) == "") || (trim($_POST['equipo_local']) == "")|| (trim($_POST['goles_local']) == "")|| (trim($_POST['goles_visita']) == "")|| (trim($_POST['fecha_partido']) == "")|| (trim($_POST['hora_partido']) == ""))
+	  if ((trim($_POST['jornada']) == "") || (trim($_POST['equipo_visita']) == "") || (trim($_POST['equipo_local']) == "")|| (trim($_POST['fecha_partido']) == "")|| (trim($_POST['hora_partido']) == ""))
 	  {
 		 $mensaje = "El código, el nombre y la descripción no pueden ir en blanco";
 	  }
@@ -24,9 +24,16 @@ $mensaje = "";
 			  //$resultado_verificar_rows = $partidos->verificar_fechas($fecha_partido,$conexion);
 
 			  $partidos->verificar_fechas($fecha_partido, $conexion);
-			  $partidos->verificar_rango_hora($hora_partido,$conexion);
-			  $resultado_insertar = $partidos->insertar($jornada,$equipo_local,$equipo_visita,$goles_local,$goles_visita,$fecha_partido,$hora_partido,$conexion);
-			  $mensaje = $partidos->mensaje;			  	
+			  $resultado_verificar_rango = $partidos->verificar_rango_hora($hora_partido,$conexion);
+			  if ($resultado_verificar_rango=='S'){
+			  	$resultado_insertar = $partidos->insertar($jornada,$equipo_local,$equipo_visita,$goles_local,$goles_visita,$fecha_partido,$hora_partido,$conexion);
+			 	$mensaje = $partidos->mensaje;
+			  }else{
+			  	$mensaje = $partidos->mensaje;
+
+			  }
+
+			  			  	
 		  }catch (Exception $e){
 			$mensaje = $e->GetMessage();
 		  }

@@ -8,6 +8,7 @@
   $fecha_partido= "";
   $hora_partido = "";
   $inhabilitar_llave = "N";
+  $res = "";
   require_once("conexion.php");
   include_once("Partidos.php");
   include_once("llenar_dropdown.php");
@@ -18,6 +19,12 @@
   			$equipo_local = $_GET['equipo_local'];
   			try{
   				$partidos = new Partidos;
+  				$resultado_verificar_partido = $partidos->verificar_partido($jornada,$equipo_visita,$equipo_local,$conexion);
+  				if($resultado_verificar_partido=="S"){
+  					$res = "El partido ya se ha jugado";
+  				}else{
+  					$res = "El partido no se ha jugado";
+  				}
   				$resultado_consulta = $partidos->buscar_registro($jornada,$equipo_local,$equipo_visita,$conexion);
   				$goles_local = $partidos->goles_local;
   				$goles_visita = $partidos->goles_visita;
@@ -82,6 +89,10 @@ function verificar_marcador(){
 	console.log('marcador_local');
 	if (marcador_local == "0"){
 		alert("hola");
+		return false;
+	}else{
+		return true;
+		asignar_variable_escondida();
 	}
 }
 
@@ -105,6 +116,9 @@ function inicializar(){
 </head>
 <body onload="inicializar();">
 	<table align="center"><form action="" method="post" onclick="verificar_marcador()">
+	<tr>
+		<td><p style="color:red;"><?php echo $res;?></p></td>
+	</tr>
 	<tr>
 		<td>
 			<span class="">Jornada:</span>

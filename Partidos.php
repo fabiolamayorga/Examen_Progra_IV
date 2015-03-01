@@ -110,10 +110,6 @@ public $datos;
 			   throw new Exception("No se pueden ingresar mas partidos en esta '$fecha_partido' fecha");	
 			 } 
 
-			 while($row = mysql_fetch_array($resultado)){
-
-			 }
-
 			 return $resultado;
 		   }
 	   }catch(Exception $e){
@@ -124,24 +120,48 @@ public $datos;
 
 	function verificar_rango_hora($hora_partido,$conexion){
 		try{
-			$resultado = mysql_query("SELECT * FROM Partidos WHERE Fecha_partido='$hora_partido'",$conexion);
-			if (!$resultado){
-				throw new Exception(mysql_error($resultado));
+			$h_p = strtotime($hora_partido);
+			$rango_inicio = strtotime('09:00');
+			$rango_final = strtotime('20:00');
+			if($h_p>$rango_inicio && $h_p<$rango_final){
+				return "S";
 			}else{
-				if(mysql_num_rows($resultado)==0){
-					throw new Exception("Error Processing Request");
-				}
-				echo strtotime($hora_partido);
-				echo strtotime('9 am');
-				if (strtotime($hora_partido) > strtotime('9 am')){
-					echo "test";
-				}
+			   	$this->mensaje = 'Verifique que la hora este dentro del rango de 9:00AM y 20:00';
+				return "N";
 			}
 
 		}catch(Exception $e){
-
+			throw new Exception($e->getMessage());
 		}
+	}
 
+	function verificar_hora($hora_partido, $conexion){
+	}
+
+	function verificar_partido($jornada, $codigo_equipo_visita, $codigo_equipo_local,$conexion){
+		try{
+			$resultado = mysql_query("SELECT * FROM Partidos WHERE Jornada=".$jornada." AND Codigo_equipo_local='$codigo_equipo_local' AND Codigo_equipo_visita= '$codigo_equipo_visita'",$conexion);
+			if(!$resultado){
+				throw new Exception(mysql_error()); 
+			}else{
+		    	if (mysql_num_rows($resultado) == 0){
+			    	throw new Exception("El registro solicitado no existe");	
+		    	}
+		    	while($row = mysql_fetch_array($resultado)){
+		    		if( $row['Goles_local']==0 && $row['Goles_visita']==0 ){
+		    			return "N";
+		    		}else{
+		    			return "S";
+		    		}
+
+		    	}
+
+		    	
+			}
+
+		}catch(Exception $e){
+			throw new Exception($e->getMessage());
+		}
 	}
 
 	function llenar_select($conexion){
@@ -150,18 +170,29 @@ public $datos;
 				if(!$resultado){
 					throw new Exception(mysql_error($resultado));
 				}else{	
-					//$row = mysql_fetch_array($resultado);
 
 					while($row = mysql_fetch_array($resultado)){
 						$this->datos.='<option value='.$row['Codigo_Equipo'].'>'.$row['Nombre'].'</option>';
 					}	
-					//echo $datos;
 			
 					return $resultado;
 				}
 			}catch(Exception $e){
 	      	throw new Exception($e->getMessage());
 	   	}
+	}
+
+	function ver_informacion($codigo_Equipo, $conexion){
+		try {
+			$resultado = mysql_query("SELECT * FROM Equipos JOIN Partidos ON Partidos.Codigo_Equipo = Equipo.Codigo_Equipo");
+			if(!$resultado){
+				throw new Exception(mysql_error($resultado));
+
+			}
+			
+		} catch (Exception $e) {
+			
+		}
 	}
 }
 
