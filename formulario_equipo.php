@@ -6,7 +6,15 @@
 		if ((trim($_POST['codigo_equipo']) == "")){
 			$mensaje = "El c&oacute;digo no puede ir en blanco";
 		}else{
-			
+			$codigo_equipo = $_POST['codigo_equipo'];
+			try{
+				$partidos = new Partidos;
+				$resultado = $partidos->ver_informacion($codigo_equipo,$conexion);
+				//echo $partidos->$nombre_equipo;
+			}catch(Exception $e){
+				$mensaje = $e->GetMessage();
+
+  			}
 		}
 	}
 ?>

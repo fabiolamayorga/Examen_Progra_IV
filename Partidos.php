@@ -1,6 +1,7 @@
 <?php
 class Partidos{
 public $jornada;
+public $nombre_equipo;
 public $codigo_equipo_local;
 public $codigo_equipo_visita;
 public $goles_local;
@@ -182,13 +183,43 @@ public $datos;
 	   	}
 	}
 
-	function ver_informacion($codigo_Equipo, $conexion){
+	function ver_informacion($codigo_equipo, $conexion){
 		try {
-			$resultado = mysql_query("SELECT * FROM Equipos JOIN Partidos ON Partidos.Codigo_Equipo = Equipo.Codigo_Equipo");
+			//$resultado = mysql_query("SELECT Equipos.Nombre, Equipos.Codigo_Equipo 
+									  //FROM Equipos 
+									  //JOIN Partidos 
+									  //Where(
+										//Equipos.Codigo_Equipo = '$codigo_equipo'
+									  //)	
+									  //", $conexion);
+			$resultado = mysql_query("SELECT * FROM Equipos 
+									  Where Codigo_Equipo='$codigo_equipo'", $conexion);
+
+			$resultado2 = mysql_query("SELECT * FROM Partidos
+									  Where (Codigo_equipo_local='$codigo_equipo') OR (Codigo_equipo_visita='$codigo_equipo')", $conexion);
+
+
 			if(!$resultado){
 				throw new Exception(mysql_error($resultado));
-
 			}
+			 while($row = mysql_fetch_array($resultado2))
+			 {
+			   //$this->jornada = $row['Jornada'];
+			   //$this->nombre_equipo = $row['Nombre'];
+	   		  /* $this->codigo_equipo_visita = $row['Codigo_Equipo'];
+	  		   $this->codigo_equipo_local = $row['Codigo_Equipo'];
+	  		   $this->goles_visita = $row['Goles_visita'];
+	  		   $this->goles_local = $row['Goles_local'];
+	  		   $this->fecha_partido = $row['Fecha_partido'];
+	  		   $this->hora_partido = $row['Hora_partido'];*/
+	  		   $this->codigo_equipo_visita=$row['Codigo_equipo_visita'];
+	  		   $resultado3 = mysql_query("SELECT * FROM Equipos 
+							Where Codigo_Equipo='$this->codigo_equipo_visita'", $conexion);
+	  		   echo $resultado3;
+	  		   echo $row['Goles_local'];
+
+			   $this->mensaje = 'El registro se recuperó correctamente';
+			 } 
 			
 		} catch (Exception $e) {
 			
