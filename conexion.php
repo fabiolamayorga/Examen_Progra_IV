@@ -2,7 +2,7 @@
 
 	$servidor = "localhost";
 	$usuario = "root";
-	$clave = "1234";
+	$clave = "";
 	$basedatos = "Campeonato";
 	$conexion = mysql_connect($servidor, $usuario,$clave);
 	if (!$conexion)

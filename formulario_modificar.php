@@ -156,7 +156,7 @@ function inicializar(){
 			<span class="">Goles local:</span>
 		</td>
 		<td>
-			<span class=""><input type="text" name="goles_local" value="<?php echo $goles_local;?>"/></span>
+			<span class=""><input type="number" min="1" name="goles_local" value="<?php echo $goles_local;?>"/></span>
 		</td>
 	</tr>
 	<tr>
@@ -164,7 +164,7 @@ function inicializar(){
 			<span class="">Goles Visita:</span>
 		</td>
 		<td>
-			<span class=""><input type="text" name="goles_visita" value="<?php echo $goles_visita;?>"/></span>
+			<span class=""><input type="number" min="1" name="goles_visita" value="<?php echo $goles_visita;?>"/></span>
 		</td>
 	</tr>
 	<tr>

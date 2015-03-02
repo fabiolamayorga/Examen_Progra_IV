@@ -1,5 +1,6 @@
 <?php
 	$mensaje = "";
+	$partidos = "";
 	require_once("Conexion.php");
 	include_once("Partidos.php");
 	if ((isset($_POST['codigo_equipo']))){
@@ -9,6 +10,7 @@
 			$codigo_equipo = $_POST['codigo_equipo'];
 			try{
 				$partidos = new Partidos;
+
 				$resultado = $partidos->ver_informacion($codigo_equipo,$conexion);
 				//echo $partidos->$nombre_equipo;
 			}catch(Exception $e){
@@ -43,5 +45,11 @@
 
 		</table>
 
+
+
+
 	</form>
+	<?php
+		echo $partidos->tabla;
+	?>
 </body>

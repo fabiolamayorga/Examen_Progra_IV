@@ -9,6 +9,7 @@ public $goles_visita;
 public $fecha_partido;
 public $hora_partido;
 public $datos;
+public $tabla;
 
 	function insertar($jornada,$codigo_equipo_local,$codigo_equipo_visita,$goles_local,$goles_visita,$fecha_partido,$hora_partido,$conexion)
 	{
@@ -185,41 +186,62 @@ public $datos;
 
 	function ver_informacion($codigo_equipo, $conexion){
 		try {
-			//$resultado = mysql_query("SELECT Equipos.Nombre, Equipos.Codigo_Equipo 
-									  //FROM Equipos 
-									  //JOIN Partidos 
-									  //Where(
-										//Equipos.Codigo_Equipo = '$codigo_equipo'
-									  //)	
-									  //", $conexion);
-			$resultado = mysql_query("SELECT * FROM Equipos 
-									  Where Codigo_Equipo='$codigo_equipo'", $conexion);
+			$consulta = "SELECT 
+						Equipos.Nombre as Nombre_equipo_local, 
+						Equipos.Codigo_Equipo,
+						Partidos.Jornada, 
+						Partidos.Goles_local, 
+						Partidos.Goles_visita, 
+						Partidos.Fecha_partido, 
+						Partidos.Hora_partido,
+						Partidos.Codigo_equipo_visita,
+						Partidos.Codigo_equipo_local
+						 FROM Equipos , Partidos
+						 where Partidos.Codigo_equipo_local = '$codigo_equipo' AND Equipos.Codigo_Equipo = Partidos.Codigo_equipo_local
+						 UNION
+						 SELECT
+						 Equipos.Nombre as 'Nombre_equipo_visita', 
+						 Equipos.Codigo_Equipo,
+						 Partidos.Jornada, 
+						 Partidos.Goles_local, 
+						 Partidos.Goles_visita, 
+						 Partidos.Fecha_partido, 
+						 Partidos.Hora_partido,
+						 Partidos.Codigo_equipo_visita,
+						 Partidos.Codigo_equipo_local
+						 FROM Equipos,Partidos
+						 where Equipos.Codigo_Equipo = Partidos.Codigo_equipo_visita and Partidos.Codigo_equipo_visita='$codigo_equipo'";
 
-			$resultado2 = mysql_query("SELECT * FROM Partidos
-									  Where (Codigo_equipo_local='$codigo_equipo') OR (Codigo_equipo_visita='$codigo_equipo')", $conexion);
-
-
+			$resultado = mysql_query($consulta,$conexion) or die(mysql_error());
+			
 			if(!$resultado){
 				throw new Exception(mysql_error($resultado));
+
 			}
-			 while($row = mysql_fetch_array($resultado2))
+			 while($row = mysql_fetch_array($resultado))
 			 {
-			   //$this->jornada = $row['Jornada'];
-			   //$this->nombre_equipo = $row['Nombre'];
-	   		  /* $this->codigo_equipo_visita = $row['Codigo_Equipo'];
-	  		   $this->codigo_equipo_local = $row['Codigo_Equipo'];
-	  		   $this->goles_visita = $row['Goles_visita'];
-	  		   $this->goles_local = $row['Goles_local'];
-	  		   $this->fecha_partido = $row['Fecha_partido'];
-	  		   $this->hora_partido = $row['Hora_partido'];*/
-	  		   $this->codigo_equipo_visita=$row['Codigo_equipo_visita'];
-	  		   $resultado3 = mysql_query("SELECT * FROM Equipos 
-							Where Codigo_Equipo='$this->codigo_equipo_visita'", $conexion);
-	  		   echo $resultado3;
-	  		   echo $row['Goles_local'];
+	  		   $this->tabla .='
+				<table align="center" style="text-align:center">
+					<tr>
+						<th>Codigo Equipo</th>
+						<th>Nombre Equipo Local</th>
+						<th>Numero de Jornada</th>
+						<th>Fecha del partido</th>
+						<th>Marcador </th>
+					</tr>
+					<tr>
+						<td>'.$row['Codigo_Equipo'].'</td>
+						<td>'.$row['Nombre_equipo_local'].'</td>
+						<td>'.$row['Jornada'].'</td>
+						<td>'.$row['Fecha_partido'].'</td>
+						<td>'.$row['Goles_visita'].'-'.$row['Goles_local'].'</td>						
+					</tr>
+				</table>';
 
 			   $this->mensaje = 'El registro se recuperó correctamente';
 			 } 
+			 return $this->tabla;
+
 			
 		} catch (Exception $e) {
 			
