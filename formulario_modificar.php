@@ -78,6 +78,7 @@ function asignar_variable_escondida()
 
 }
 function llamar_pantalla(){
+   verificar_espacios_blanco();
    asignar_variable_escondida();
    parent.location='formulario_modificar.php?jornada=' + document.getElementById('Code').value + "&equipo_local="+ document.getElementById('Code2').value+"&equipo_visita="+document.getElementById('Code3').value ;
    
@@ -88,7 +89,6 @@ function verificar_marcador(){
 	var marcador_visita = document.getElementById('Code3').value;
 	console.log('marcador_local');
 	if (marcador_local == "0"){
-		alert("hola");
 		return false;
 	}else{
 		return true;
@@ -112,6 +112,18 @@ function inicializar(){
       document.getElementsByClassName("llave").value = "";
    }  
 }
+    
+function verificar_espacios_blanco(){
+    var codigo1 = document.getElementById("equipo_local");
+    var codigo2 = document.getElementById("equipo_visita");
+
+    if (codigo1=="" && codigo2==""){
+    	return false;
+    	alert("Debe ingresar los codigos de equipo local y equipo visita");
+    }
+
+}
+    
 </script>
 </head>
 <body onload="inicializar();">

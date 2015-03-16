@@ -221,7 +221,7 @@ public $tabla;
 			 while($row = mysql_fetch_array($resultado))
 			 {
 	  		   $this->tabla .='
-				<table align="center" style="text-align:center">
+				<table align="center" style="text-align:center" border="1" colspan="0">
 					<tr>
 						<th>Codigo Equipo</th>
 						<th>Nombre Equipo Local</th>
